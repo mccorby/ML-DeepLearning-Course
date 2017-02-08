@@ -1,3 +1,6 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
 from load_data import maybe_download
 from load_data import maybe_extract
 from curate_data import maybe_pickle
@@ -43,3 +46,10 @@ print('Testing:', test_dataset.shape, test_labels.shape)
 train_dataset, train_labels = randomize(train_dataset, train_labels)
 test_dataset, test_labels = randomize(test_dataset, test_labels)
 valid_dataset, valid_labels = randomize(valid_dataset, valid_labels)
+
+letter = 'ABCDEFGHIJ'
+sample_idx = np.random.randint(0, len(train_dataset))
+
+plt.imshow(train_dataset[sample_idx])
+plt.title("Char " + letter[(train_labels[sample_idx])])
+plt.show()
