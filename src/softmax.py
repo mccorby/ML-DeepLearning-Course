@@ -6,6 +6,11 @@ import numpy as np
 import math
 
 def softmax(x):
+    # x = x * 10
+    # If we multiply the values by 10, probabilities get closer to
+    # either 0.0 or 1.0
+
+    x = list(map(lambda value: value/10, x))
     """Compute softmax values for each sets of scores in x."""
     return np.exp(x) / np.sum(np.exp(x), axis=0)
 
