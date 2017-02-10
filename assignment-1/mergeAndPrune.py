@@ -4,7 +4,7 @@ Depending on your computer setup, you might not be able to fit it all in memory,
 and you can tune train_size as needed. The labels will be stored into a separate array of integers 0 through 9.
 Also create a validation dataset for hyperparameter tuning.
 '''
-
+import os
 import numpy as np
 from six.moves import cPickle as pickle
 
@@ -58,3 +58,22 @@ def randomize(dataset, labels):
   shuffled_dataset = dataset[permutation,:,:]
   shuffled_labels = labels[permutation]
   return shuffled_dataset, shuffled_labels
+
+def saveData(data_root, filename, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels):
+    pickle_file = os.path.join(data_root, filename)
+
+    try:
+      f = open(pickle_file, 'wb')
+      save = {
+        'train_dataset': train_dataset,
+        'train_labels': train_labels,
+        'valid_dataset': valid_dataset,
+        'valid_labels': valid_labels,
+        'test_dataset': test_dataset,
+        'test_labels': test_labels,
+        }
+      pickle.dump(save, f, pickle.HIGHEST_PROTOCOL)
+      f.close()
+    except Exception as e:
+      print('Unable to save data to', pickle_file, ':', e)
+      raise

@@ -9,11 +9,17 @@ from problem_2 import displaySampleData
 from problem_3 import checkDataIsBalanced
 from mergeAndPrune import merge_datasets
 from mergeAndPrune import randomize
+from mergeAndPrune import saveData
+from problem_5 import measure_overlap
+
+from predict import predict
 
 # TODO Move this global values somewhere else
 image_size = 28  # Pixel width and height.
 pixel_depth = 255.0  # Number of levels per pixel.
+data_root = '.' # Change me to store data elsewhere
 
+pickle_filename = 'notMNIST.pickle'
 train_filename = maybe_download('notMNIST_large.tar.gz', 247336696)
 test_filename = maybe_download('notMNIST_small.tar.gz', 8458043)
 
@@ -53,3 +59,13 @@ sample_idx = np.random.randint(0, len(train_dataset))
 plt.imshow(train_dataset[sample_idx])
 plt.title("Char " + letter[(train_labels[sample_idx])])
 plt.show()
+
+saveData(data_root, pickle_filename, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels)
+
+measure_overlap(train_dataset, valid_dataset, test_dataset)
+
+# train_sanitized, valid_sanitized, test_sanitizes = sanitize(train_dataset, valid_dataset, test_dataset)
+# saveSanitizedData(train_sanitized, valid_sanitized, test_sanitizes)
+regr = predict(50, train_dataset, train_labels, test_dataset, test_labels)
+# The coefficients
+print('Coefficients: \n', regr.coef_)
