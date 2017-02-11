@@ -5,13 +5,13 @@ Hint: you can use the LogisticRegression model from sklearn.linear_model.
 from sklearn import linear_model
 import numpy as np
 
-def predict(number_samples, train_dataset, train_labels, test_dataset, test_labels):
-    train_dataset_size = len(train_dataset)
-    # Pure functions don't do this!
-    print('{} {}'.format('Train Dataset Size', train_dataset_size))
-    reshaped_dataset = train_dataset.reshape(train_dataset_size, -1)
-    idx = np.random.randint(number_samples)
-    predict_dataset = train_dataset[idx, :]
+def fit_model(number_samples, train_dataset, train_labels):
+    idx =np.random.choice(train_labels.shape[0], number_samples, replace=False)
+    fit_dataset = train_dataset[idx, :]
+    fit_labels = train_labels[idx]
+    print('{}:{}'.format('Fit Dataset shape', fit_dataset.shape))
+    print('{}:{}'.format('Fit labels shape', fit_labels.shape))
     regr = linear_model.LogisticRegression()
-    regr.fit(reshaped_dataset, train_labels)
+    regr.fit(fit_dataset, fit_labels)
+
     return regr

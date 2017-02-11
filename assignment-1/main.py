@@ -12,7 +12,9 @@ from mergeAndPrune import randomize
 from mergeAndPrune import saveData
 from problem_5 import measure_overlap
 
-from predict import predict
+import predict
+from sklearn.externals import joblib
+import os
 
 # TODO Move this global values somewhere else
 image_size = 28  # Pixel width and height.
@@ -58,7 +60,7 @@ sample_idx = np.random.randint(0, len(train_dataset))
 
 plt.imshow(train_dataset[sample_idx])
 plt.title("Char " + letter[(train_labels[sample_idx])])
-plt.show()
+#plt.show()
 
 saveData(data_root, pickle_filename, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels)
 
@@ -66,6 +68,21 @@ measure_overlap(train_dataset, valid_dataset, test_dataset)
 
 # train_sanitized, valid_sanitized, test_sanitizes = sanitize(train_dataset, valid_dataset, test_dataset)
 # saveSanitizedData(train_sanitized, valid_sanitized, test_sanitizes)
-regr = predict(50, train_dataset, train_labels, test_dataset, test_labels)
-# The coefficients
-print('Coefficients: \n', regr.coef_)
+
+training_sizes = [50, 100, 1000]
+train_dataset_size = len(train_dataset)
+print('{} {} - {}:{}'.format('Train Dataset Size', train_dataset_size, 'Dimensions', train_dataset.shape))
+# Need to reshape the dataset into 2D
+reshaped_dataset = train_dataset.reshape(train_dataset_size, -1)
+print('{}:{}', 'Train Dataset shape', reshaped_dataset.shape)
+print('{}:{}', 'Train labels shape', train_labels.shape)
+valid_dataset_size = len(valid_dataset)
+reshaped_valid = valid_dataset.reshape(valid_dataset_size, -1)
+for i in training_sizes:
+    model_filename = '{}{}.{}'.format('model', i, 'pkl')
+    print('{} {}'.format('Fitting training size', i))
+    regr = predict.fit_model(i, reshaped_dataset, train_labels)
+    print('Coefficients: \n', regr.coef_)
+    joblib.dump(regr, os.path.join(data_root, model_filename))
+    # Explained variance score: 1 is perfect prediction
+    print('Variance score: %.2f' % regr.score(reshaped_valid, valid_labels))
