@@ -22,7 +22,7 @@ Given these sizes, it should be possible to train models quickly on any machine.
 '''
 url = 'http://commondatastorage.googleapis.com/books1000/'
 last_percent_reported = None
-data_root = '.' # Change me to store data elsewhere
+data_root = '/home/jose/WorkingData/ML-DL-Course/' # Change me to store data elsewhere
 
 def download_progress_hook(count, blockSize, totalSize):
   """A hook to report the progress of a download. This is mostly intended for users with
@@ -79,3 +79,4 @@ def maybe_extract(filename, force=False):
         num_classes, len(data_folders)))
   print(data_folders)
   return data_folders
+#

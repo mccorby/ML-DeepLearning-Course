@@ -17,7 +17,7 @@ from predict import predict
 # TODO Move this global values somewhere else
 image_size = 28  # Pixel width and height.
 pixel_depth = 255.0  # Number of levels per pixel.
-data_root = '.' # Change me to store data elsewhere
+data_root = '/home/jose/WorkingData/ML-DL-Course/' # Change me to store data elsewhere
 
 pickle_filename = 'notMNIST.pickle'
 train_filename = maybe_download('notMNIST_large.tar.gz', 247336696)
