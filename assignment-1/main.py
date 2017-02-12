@@ -70,7 +70,7 @@ measure_overlap(train_dataset, valid_dataset, test_dataset)
 # saveSanitizedData(train_sanitized, valid_sanitized, test_sanitizes)
 
 # TODO Refactor into a separate function
-training_sizes = [50, 100, 1000]
+training_sizes = [50, 100, 1000, 150000]
 train_dataset_size = len(train_dataset)
 print('{} {} - {}:{}'.format('Train Dataset Size', train_dataset_size, 'Dimensions', train_dataset.shape))
 # Need to reshape the dataset into 2D
@@ -78,7 +78,7 @@ reshaped_dataset = train_dataset.reshape(train_dataset_size, -1)
 print('{}:{}', 'Train Dataset shape', reshaped_dataset.shape)
 print('{}:{}', 'Train labels shape', train_labels.shape)
 test_dataset_size = len(test_dataset)
-reshaped_test = valid_dataset.reshape(test_dataset_size, -1)
+reshaped_test = test_dataset.reshape(test_dataset_size, -1)
 for i in training_sizes:
     model_filename = '{}{}.{}'.format('model', i, 'pkl')
     print('{} {}'.format('Fitting training size', i))
