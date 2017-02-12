@@ -69,6 +69,7 @@ measure_overlap(train_dataset, valid_dataset, test_dataset)
 # train_sanitized, valid_sanitized, test_sanitizes = sanitize(train_dataset, valid_dataset, test_dataset)
 # saveSanitizedData(train_sanitized, valid_sanitized, test_sanitizes)
 
+# TODO Refactor into a separate function
 training_sizes = [50, 100, 1000]
 train_dataset_size = len(train_dataset)
 print('{} {} - {}:{}'.format('Train Dataset Size', train_dataset_size, 'Dimensions', train_dataset.shape))
@@ -76,8 +77,8 @@ print('{} {} - {}:{}'.format('Train Dataset Size', train_dataset_size, 'Dimensio
 reshaped_dataset = train_dataset.reshape(train_dataset_size, -1)
 print('{}:{}', 'Train Dataset shape', reshaped_dataset.shape)
 print('{}:{}', 'Train labels shape', train_labels.shape)
-valid_dataset_size = len(valid_dataset)
-reshaped_valid = valid_dataset.reshape(valid_dataset_size, -1)
+test_dataset_size = len(test_dataset)
+reshaped_test = valid_dataset.reshape(test_dataset_size, -1)
 for i in training_sizes:
     model_filename = '{}{}.{}'.format('model', i, 'pkl')
     print('{} {}'.format('Fitting training size', i))
@@ -85,4 +86,4 @@ for i in training_sizes:
     print('Coefficients: \n', regr.coef_)
     joblib.dump(regr, os.path.join(data_root, model_filename))
     # Explained variance score: 1 is perfect prediction
-    print('Variance score: %.2f' % regr.score(reshaped_valid, valid_labels))
+    print('Variance score: %.2f' % regr.score(reshaped_test, test_labels))
