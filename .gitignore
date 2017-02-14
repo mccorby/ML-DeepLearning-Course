@@ -9,3 +9,6 @@ __pycache__/
 
 .idea
 *.iml
+
+# Local config file
+config/local_config.json

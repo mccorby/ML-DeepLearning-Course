@@ -15,15 +15,24 @@ from problem_5 import measure_overlap
 import predict
 from sklearn.externals import joblib
 import os
+import json
+from config import open_config_if_exists
 
 # TODO Move this global values somewhere else
 image_size = 28  # Pixel width and height.
 pixel_depth = 255.0  # Number of levels per pixel.
-data_root = '/home/jose/WorkingData/ML-DL-Course/' # Change me to store data elsewhere
+with open_config_if_exists('config/local_config.json') as (config_file, err):
+    if err:
+        print('Config file is not defined. Expected at ./config/local_config.json')
+    else:
+        config_data = json.load(config_file)
+
+data_root = config_data['data_root']
+models_path = config_data['models_path']
 
 pickle_filename = 'notMNIST.pickle'
-train_filename = maybe_download('notMNIST_large.tar.gz', 247336696)
-test_filename = maybe_download('notMNIST_small.tar.gz', 8458043)
+train_filename = maybe_download(data_root, 'notMNIST_large.tar.gz', 247336696)
+test_filename = maybe_download(data_root, 'notMNIST_small.tar.gz', 8458043)
 
 train_folders = maybe_extract(train_filename)
 test_folders = maybe_extract(test_filename)
@@ -84,6 +93,6 @@ for i in training_sizes:
     print('{} {}'.format('Fitting training size', i))
     regr = predict.fit_model(i, reshaped_dataset, train_labels)
     print('Coefficients: \n', regr.coef_)
-    joblib.dump(regr, os.path.join(data_root, model_filename))
+    joblib.dump(regr, os.path.join(models_path, model_filename))
     # Explained variance score: 1 is perfect prediction
     print('Variance score: %.2f' % regr.score(reshaped_test, test_labels))

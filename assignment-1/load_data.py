@@ -20,9 +20,9 @@ The labels are limited to 'A' through 'J' (10 classes).
 The training set has about 500k and the testset 19000 labelled examples.
 Given these sizes, it should be possible to train models quickly on any machine.
 '''
+# TODO Move the URL to the config
 url = 'http://commondatastorage.googleapis.com/books1000/'
 last_percent_reported = None
-data_root = '/home/jose/WorkingData/ML-DL-Course/' # Change me to store data elsewhere
 
 def download_progress_hook(count, blockSize, totalSize):
   """A hook to report the progress of a download. This is mostly intended for users with
@@ -41,7 +41,7 @@ def download_progress_hook(count, blockSize, totalSize):
 
     last_percent_reported = percent
 
-def maybe_download(filename, expected_bytes, force=False):
+def maybe_download(data_root, filename, expected_bytes, force=False):
   """Download a file if not present, and make sure it's the right size."""
   dest_filename = os.path.join(data_root, filename)
   if force or not os.path.exists(dest_filename):

@@ -3,9 +3,17 @@ from six.moves import cPickle as pickle
 from sklearn.externals import joblib
 import matplotlib.pyplot as plt
 
+import json
+
 # Load data
 letters = 'ABCDEFGHIJ'
-data_root = '/home/jose/WorkingData/ML-DL-Course/'
+with open_config_if_exists('config/local_config.json') as (config_file, err):
+    if err:
+        print('Config file is not defined. Expected at ./config/local_config.json')
+    else:
+        config_data = json.load(config_file)
+data_root = config_data['data_root']
+models_path = config_data['models_path']
 data_file = 'notMNIST.pickle'
 file_path = os.path.join(data_root, data_file)
 if not os.path.exists(file_path):
@@ -20,7 +28,7 @@ valid_labels = dataset['valid_labels']
 print('{} {}/{}'.format('Size Validation Datasete', valid_dataset.shape, valid_labels.shape))
 
 # Load model
-model_filename = './models/model1000.pkl'
+model_filename = os.path.join(models_path, 'model1000.pkl')
 model = joblib.load(model_filename)
 
 # Predict using validation set. Ideally we should be using any other image

@@ -6,7 +6,7 @@ from sklearn import linear_model
 import numpy as np
 
 def fit_model(number_samples, train_dataset, train_labels):
-    idx =np.random.choice(train_labels.shape[0], number_samples, replace=False)
+    idx = np.random.choice(train_labels.shape[0], number_samples, replace=False)
     fit_dataset = train_dataset[idx, :]
     fit_labels = train_labels[idx]
     print('{}:{}'.format('Fit Dataset shape', fit_dataset.shape))
