@@ -62,8 +62,7 @@ with graph.as_default():
     # These are the parameters that we are going to be training. The weight
     # matrix will be initialized using random values following a (truncated)
     # normal distribution. The biases get initialized to zero.
-    weights = tf.Variable(
-        tf.truncated_normal([image_size * image_size, num_labels]))
+    weights = tf.Variable(tf.truncated_normal([image_size * image_size, num_labels]))
     biases = tf.Variable(tf.zeros([num_labels]))
 
     # Training computation.
@@ -234,8 +233,8 @@ with tf.Session(graph=graph) as session:
         _, l, predictions = session.run([optimizer, loss, train_prediction], feed_dict=feed_dict)
 
         if (step % 500 == 0):
-            print('{} {}: {}'.format('Minibatch loss at step', step, l))
-            print('{}: {}'.format('Minibatch Accuracy', accuracy(predictions, batch_labels)))
-            print('{}: {}'.format('Validation Accuracy', accuracy(valid_prediction.eval(), valid_labels)))
+            print('{} {}: {}'.format('Relu loss at step', step, l))
+            print('{}: {}'.format('Relu Accuracy', accuracy(predictions, batch_labels)))
+            print('{}: {}'.format('Relu Accuracy', accuracy(valid_prediction.eval(), valid_labels)))
 
     print('{}: {}'.format('Test Accuray', accuracy(test_prediction.eval(), test_labels)))
