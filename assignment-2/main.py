@@ -17,11 +17,13 @@ labels as float 1-hot encodings.
 image_size = 28
 num_labels = 10
 
+
 def reformat(dataset, labels):
-  dataset = dataset.reshape((-1, image_size * image_size)).astype(np.float32)
-  # Map 0 to [1.0, 0.0, 0.0 ...], 1 to [0.0, 1.0, 0.0 ...]
-  labels = (np.arange(num_labels) == labels[:,None]).astype(np.float32)
-  return dataset, labels
+    dataset = dataset.reshape((-1, image_size * image_size)).astype(np.float32)
+    # Map 0 to [1.0, 0.0, 0.0 ...], 1 to [0.0, 1.0, 0.0 ...]
+    labels = (np.arange(num_labels) == labels[:, None]).astype(np.float32)
+    return dataset, labels
+
 
 train_dataset, train_labels = reformat(train_dataset, train_labels)
 valid_dataset, valid_labels = reformat(valid_dataset, valid_labels)
@@ -29,7 +31,6 @@ test_dataset, test_labels = reformat(test_dataset, test_labels)
 print('Training set', train_dataset.shape, train_labels.shape)
 print('Validation set', valid_dataset.shape, valid_labels.shape)
 print('Test set', test_dataset.shape, test_labels.shape)
-
 
 '''
 Training a multinomial logistic regression with TensorFlow
@@ -76,7 +77,7 @@ with graph.as_default():
 
     # Optimizer.
     # We are going to find the minimum of this loss using gradient descent.
-    optimizier = tf.train.GradientDescentOptimizer(0.5).minimize(loss)
+    optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(loss)
 
     # Predictions for the training, validation, and test data.
     # These are not part of training, but merely here so that we can report
@@ -85,14 +86,15 @@ with graph.as_default():
     valid_prediction = tf.nn.softmax(tf.matmul(tf_valid_dataset, weights) + biases)
     test_prediction = tf.nn.softmax(tf.matmul(tf_test_dataset, weights) + biases)
 
-
 '''
 Let's run this computation and iterate!
 '''
 num_steps = 801
 
+
 def accuracy(predictions, labels):
-    return (100.0 * np.sum(np.argmax(predictions, 1) == np.argmax(labels, 1)) / predictions.shape[0])
+    return 100.0 * np.sum(np.argmax(predictions, 1) == np.argmax(labels, 1)) / predictions.shape[0]
+
 
 with tf.Session(graph=graph) as session:
     # This is a one-time operation which ensures the parameters get initialized as
@@ -102,8 +104,8 @@ with tf.Session(graph=graph) as session:
     for step in range(num_steps):
         # Run the computations. We tell .run() that we want to run the optimizer,
         # and get the loss value and the training predictions returned as numpy arrays.
-        _, l, predictions = session.run([optimizier, loss, train_prediction])
-        if (step % 100 == 0):
+        _, l, predictions = session.run([optimizer, loss, train_prediction])
+        if step % 100 == 0:
             print('{} {}: {}'.format('Loss at step', step, l))
             print('{}: {}'.format('Training Accuracy', accuracy(predictions, train_labels[:train_subset, :])))
 
@@ -113,7 +115,6 @@ with tf.Session(graph=graph) as session:
             print('{}: {}'.format('Validation Accuracy', accuracy(valid_prediction.eval(), valid_labels)))
 
     print('{}: {}'.format('Test Accuracy', accuracy(test_prediction.eval(), test_labels)))
-
 
 '''
 Use now SGD
@@ -162,19 +163,19 @@ with tf.Session(graph=graph) as session:
         # Generate a mini batch
         batch_data = train_dataset[offset:(offset + batch_size), :]
         batch_labels = train_labels[offset:(offset + batch_size), :]
+
         # Prepare a dictionary telling the session where to feed the minibatch.
         # The key of the dictionary is the placeholder node of the graph to be fed,
         # and the value is the numpy array to feed to it.
-        feed_dict = {tf_train_dataset : batch_data, tf_train_labels : batch_labels}
+        feed_dict = {tf_train_dataset: batch_data, tf_train_labels: batch_labels}
         _, l, predictions = session.run([optimizer, loss, train_prediction], feed_dict=feed_dict)
 
-        if (step % 500 == 0):
+        if step % 500 == 0:
             print('{} {}: {}'.format('Minibatch loss at step', step, l))
             print('{}: {}'.format('Minibatch Accuracy', accuracy(predictions, batch_labels)))
             print('{}: {}'.format('Validation Accuracy', accuracy(valid_prediction.eval(), valid_labels)))
 
     print('{}: {}'.format('Test Accuray', accuracy(test_prediction.eval(), test_labels)))
-
 
 '''
 Use relu and a hidden layer
@@ -229,7 +230,7 @@ with tf.Session(graph=graph) as session:
         # Prepare a dictionary telling the session where to feed the minibatch.
         # The key of the dictionary is the placeholder node of the graph to be fed,
         # and the value is the numpy array to feed to it.
-        feed_dict = {tf_train_dataset : batch_data, tf_train_labels : batch_labels}
+        feed_dict = {tf_train_dataset: batch_data, tf_train_labels: batch_labels}
         _, l, predictions = session.run([optimizer, loss, train_prediction], feed_dict=feed_dict)
 
         if (step % 500 == 0):

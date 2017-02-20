@@ -16,6 +16,7 @@ labels as float 1-hot encodings.
 '''
 image_size = 28
 num_labels = 10
+num_labels = 10
 
 def reformat(dataset, labels):
     dataset = dataset.reshape((-1, image_size * image_size)).astype(np.float32)

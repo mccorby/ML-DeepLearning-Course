@@ -20,9 +20,7 @@ def inference(tf_train_dataset):
     biases = tf.Variable(tf.zeros([NUM_LABELS]), name='biases')
 
     # Training computation.
-    # We multiply the inputs with the weight matrix, and add biases. We compute
-    # the softmax and cross-entropy (it's one operation in TensorFlow, because
-    # it's very common, and it can be optimized).
+    # We multiply the inputs with the weight matrix, and add biases
     logits = tf.matmul(tf_train_dataset, weights) + biases
 
     return logits
