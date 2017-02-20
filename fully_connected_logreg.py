@@ -1,12 +1,12 @@
 import tensorflow as tf
-import logistic_regression
+from logistic_regression import *
 
 
 BATCH_SIZE = 128
 MAX_STEPS = 3001
 
 
-def run_training(training_rate, train_dataset, train_labels):
+def run_training(training_rate, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels):
     # Get the sets of images and labels for training, validation, and
     # test on MNIST.
 
@@ -16,19 +16,22 @@ def run_training(training_rate, train_dataset, train_labels):
 
         # Input data. For the training data, we use a placeholder that will be fed
         # at run time with a training minibatch.
-        tf_train_dataset = tf.placeholder(tf.float32, shape=(BATCH_SIZE, logistic_regression.IMAGE_PIXELS))
-        tf_train_labels = tf.placeholder(tf.float32, shape=(BATCH_SIZE, logistic_regression.NUM_LABELS))
+        tf_train_dataset = tf.placeholder(tf.float32, shape=(BATCH_SIZE, IMAGE_PIXELS))
+        tf_train_labels = tf.placeholder(tf.float32, shape=(BATCH_SIZE, NUM_LABELS))
+        tf_valid_dataset = tf.constant(valid_dataset, name='valid_dataset')
+        tf_test_dataset = tf.constant(test_dataset, name='test_dataset')
 
         # Build a Graph that computes predictions from the inference model.
-        logits = logistic_regression.inference(tf_train_dataset)
+        logits, weights, biases = inference(tf_train_dataset)
 
         # Add the ops for loss calculation to the graph
-        loss = logistic_regression.loss(logits, tf_train_labels)
+        loss_op = loss(logits, tf_train_labels)
 
         # Add to the Graph the Ops that calculate and apply gradients.
-        train_op = logistic_regression.training(loss, training_rate)
+        train_op = training(loss_op, training_rate)
 
-        train_prediction = tf.nn.softmax(logits)
+        train_prediction, valid_prediction, test_prediction = prediction(logits, tf_valid_dataset,
+                                                                         tf_test_dataset, weights, biases)
 
         # Add the Op to compare the logits to the labels during evaluation.
         # eval_correct = logistic_regression.evaluation(logits, tf_train_labels)
@@ -56,9 +59,13 @@ def run_training(training_rate, train_dataset, train_labels):
                 tf_train_dataset: batch_data,
                 tf_train_labels: batch_labels
             }
-            _, loss_value, predictions = sess.run([train_op, loss, train_prediction], feed_dict=feed_dict)
+            _, loss_value, predictions = sess.run([train_op, loss_op, train_prediction], feed_dict=feed_dict)
 
             if step % 500 == 0:
                 print('{} {}: {}'.format('Minibatch loss at step', step, loss_value))
-                print('{}: {}'.format('Minibatch Accuracy', logistic_regression.evaluation(predictions, batch_labels)))
+                print('{}: {}'.format('Minibatch Accuracy', evaluation(predictions, batch_labels)))
+                print('{}: {}'.format('Minibatch Validation Accuracy', evaluation(valid_prediction.eval(), valid_labels)))
+
+        print('{}: {}'.format('Minibatch Test Accuracy', evaluation(test_prediction.eval(), test_labels)))
+
 

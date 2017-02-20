@@ -23,7 +23,7 @@ def inference(tf_train_dataset):
     # We multiply the inputs with the weight matrix, and add biases
     logits = tf.matmul(tf_train_dataset, weights) + biases
 
-    return logits
+    return logits, weights, biases
 
 
 def loss(logits, tf_train_labels):
@@ -63,3 +63,11 @@ def evaluation(logits, labels):
         A scalar int32 representing the percentage of correct predictions
     """
     return 100.0 * np.sum(np.argmax(logits, 1) == np.argmax(labels, 1)) / logits.shape[0]
+
+
+def prediction(logits, tf_valid_dataset, tf_test_dataset, weights, biases):
+    train_prediction = tf.nn.softmax(logits)
+    valid_prediction = tf.nn.softmax(tf.matmul(tf_valid_dataset, weights) + biases)
+    test_prediction = tf.nn.softmax(tf.matmul(tf_test_dataset, weights) + biases)
+
+    return train_prediction, valid_prediction, test_prediction

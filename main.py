@@ -40,4 +40,5 @@ print('Training set', train_dataset.shape, train_labels.shape)
 print('Validation set', valid_dataset.shape, valid_labels.shape)
 print('Test set', test_dataset.shape, test_labels.shape)
 
-fully_connected_logreg.run_training(TRAINING_RATE, train_dataset, train_labels)
+fully_connected_logreg.run_training(TRAINING_RATE, train_dataset, train_labels, valid_dataset, valid_labels,
+                                    test_dataset, test_labels)
