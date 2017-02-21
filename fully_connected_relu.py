@@ -8,7 +8,7 @@ BATCH_SIZE = 128
 MAX_STEPS = 3001
 
 
-def run_training(training_rate, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels,
+def run_training(training_rate, reg_beta, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels,
                  log_dir):
     # Get the sets of images and labels for training, validation, and
     # test on MNIST.
@@ -27,7 +27,7 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
         logits, weights, biases = inference(tf_train_dataset)
 
         # Add the ops for loss calculation to the graph
-        loss_op = loss(logits, tf_train_labels)
+        loss_op = loss(logits, tf_train_labels, reg_beta, weights)
 
         # Add to the Graph the Ops that calculate and apply gradients.
         train_op = training(loss_op, training_rate)

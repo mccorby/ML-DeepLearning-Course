@@ -38,15 +38,17 @@ def inference(tf_train_dataset):
     return logits, weights, biases
 
 
-def loss(logits, tf_train_labels):
+def loss(logits, tf_train_labels, reg_beta, weights):
     """
     Adds to the inference graph the ops required to generate loss
     :return: Loss tensor of type float
     """
 
     # We take the average of this cross-entropy across all training examples: that's our loss.
+    reg_term = reg_beta * ((tf.nn.l2_loss(weights['hidden_1'])) + (tf.nn.l2_loss(weights['out'])))
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=tf_train_labels, logits=logits)
-    return tf.reduce_mean(cross_entropy)
+
+    return tf.reduce_mean(cross_entropy) + reg_term
 
 
 def training(loss, learning_rate):
