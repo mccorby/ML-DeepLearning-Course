@@ -233,7 +233,7 @@ with tf.Session(graph=graph) as session:
         feed_dict = {tf_train_dataset: batch_data, tf_train_labels: batch_labels}
         _, l, predictions = session.run([optimizer, loss, train_prediction], feed_dict=feed_dict)
 
-        if (step % 500 == 0):
+        if step % 500 == 0:
             print('{} {}: {}'.format('Relu loss at step', step, l))
             print('{}: {}'.format('Relu Accuracy', accuracy(predictions, batch_labels)))
             print('{}: {}'.format('Relu Accuracy', accuracy(valid_prediction.eval(), valid_labels)))

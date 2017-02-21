@@ -1,5 +1,4 @@
-from logistic_regression import *
-
+from relu import *
 
 BATCH_SIZE = 128
 MAX_STEPS = 3001
@@ -12,7 +11,6 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
     # Tell TensorFlow that the model will be built into the default Graph.
     graph = tf.Graph()
     with graph.as_default():
-
         # Input data. For the training data, we use a placeholder that will be fed
         # at run time with a training minibatch.
         tf_train_dataset = tf.placeholder(tf.float32, shape=(BATCH_SIZE, IMAGE_PIXELS))
@@ -31,10 +29,7 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
 
         train_prediction, valid_prediction, test_prediction = prediction(logits, tf_valid_dataset,
                                                                          tf_test_dataset, weights, biases)
-
-        # Add the Op to compare the logits to the labels during evaluation.
-        # eval_correct = logistic_regression.evaluation(logits, tf_train_labels)
-
+# Let's run it
     with tf.Session(graph=graph) as sess:
         # Init handler
         init = tf.global_variables_initializer()
@@ -61,10 +56,8 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
             _, loss_value, predictions = sess.run([train_op, loss_op, train_prediction], feed_dict=feed_dict)
 
             if step % 500 == 0:
-                print('{} {}: {}'.format('Minibatch loss at step', step, loss_value))
-                print('{}: {}'.format('Minibatch Accuracy', evaluation(predictions, batch_labels)))
-                print('{}: {}'.format('Minibatch Validation Accuracy', evaluation(valid_prediction.eval(), valid_labels)))
+                print('{} {}: {}'.format('Relu loss at step', step, loss_value))
+                print('{}: {}'.format('Relu Accuracy', evaluation(predictions, batch_labels)))
+                print('{}: {}'.format('Relu Validation Accuracy', evaluation(valid_prediction.eval(), valid_labels)))
 
-        print('{}: {}'.format('Minibatch Test Accuracy', evaluation(test_prediction.eval(), test_labels)))
-
-
+        print('{}: {}'.format('Relu Test Accuracy', evaluation(test_prediction.eval(), test_labels)))
