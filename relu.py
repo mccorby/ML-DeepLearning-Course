@@ -74,7 +74,11 @@ def evaluation(logits, labels):
     Returns:
         A scalar int32 representing the percentage of correct predictions
     """
-    return 100.0 * np.sum(np.argmax(logits, 1) == np.argmax(labels, 1)) / logits.shape[0]
+    # return tf.reduce_sum(100.0 * np.sum(np.argmax(logits, 1) == np.argmax(labels, 1)) / logits.shape[0])
+    labels_int = tf.argmax(labels, 1)
+    correct = tf.nn.in_top_k(logits, labels_int, 1)
+    # Return the number of true entries.
+    return tf.reduce_sum(tf.cast(correct, tf.int32))
 
 
 def prediction(logits, tf_valid_dataset, tf_test_dataset, weights, biases):

@@ -1,10 +1,15 @@
 from relu import *
+import os
+
+# TODO Refactor this with fully_connected_logreg as they are almost the same!
+# A way of doing it is by passing an object that is in charge of providing the inference, loss, etc...
 
 BATCH_SIZE = 128
 MAX_STEPS = 3001
 
 
-def run_training(training_rate, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels):
+def run_training(training_rate, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels,
+                 log_dir):
     # Get the sets of images and labels for training, validation, and
     # test on MNIST.
 
@@ -29,8 +34,20 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
 
         train_prediction, valid_prediction, test_prediction = prediction(logits, tf_valid_dataset,
                                                                          tf_test_dataset, weights, biases)
-# Let's run it
+
+        # Add the Op to compare the logits to the labels during evaluation.
+        eval_correct = evaluation(logits, tf_train_labels)
+        tf.summary.scalar('Logits Eval', eval_correct)
+
+    # Let's run it
     with tf.Session(graph=graph) as sess:
+        # Instantiate a SummaryWriter to output summaries and the Graph.
+        summary_writer = tf.summary.FileWriter(log_dir, sess.graph)
+        # Build the summary Tensor based on the TF collection of Summaries.
+        summary = tf.summary.merge_all()
+        # Create a saver for writing training checkpoints.
+        saver = tf.train.Saver()
+
         # Init handler
         init = tf.global_variables_initializer()
 
@@ -55,9 +72,21 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
             }
             _, loss_value, predictions = sess.run([train_op, loss_op, train_prediction], feed_dict=feed_dict)
 
+            # Update the events file
+            if step % 100 == 0:
+                # Update the events file.
+                print("{} {}".format("Summary", summary))
+                summary_str = sess.run(summary, feed_dict=feed_dict)
+                summary_writer.add_summary(summary_str, step)
+                summary_writer.flush()
+
+            # Update to stdout
             if step % 500 == 0:
                 print('{} {}: {}'.format('Relu loss at step', step, loss_value))
                 print('{}: {}'.format('Relu Accuracy', evaluation(predictions, batch_labels)))
                 print('{}: {}'.format('Relu Validation Accuracy', evaluation(valid_prediction.eval(), valid_labels)))
+
+                checkpoint_file = os.path.join(log_dir, 'model.ckpt')
+                saver.save(sess, checkpoint_file, global_step=step)
 
         print('{}: {}'.format('Relu Test Accuracy', evaluation(test_prediction.eval(), test_labels)))
