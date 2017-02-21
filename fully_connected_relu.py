@@ -8,8 +8,8 @@ BATCH_SIZE = 128
 MAX_STEPS = 3001
 
 
-def run_training(training_rate, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels,
-                 log_dir):
+def run_training(training_rate, regularization, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset,
+                 test_labels, log_dir):
     # Get the sets of images and labels for training, validation, and
     # test on MNIST.
 
@@ -24,10 +24,10 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
         tf_test_dataset = tf.constant(test_dataset, name='test_dataset')
 
         # Build a Graph that computes predictions from the inference model.
-        logits, weights, biases = inference(tf_train_dataset)
+        logits, weights, biases, beta_regul = inference(tf_train_dataset)
 
         # Add the ops for loss calculation to the graph
-        loss_op = loss(logits, tf_train_labels)
+        loss_op = loss(logits, tf_train_labels, regularization, weights)
 
         # Add to the Graph the Ops that calculate and apply gradients.
         train_op = training(loss_op, training_rate)
@@ -68,14 +68,14 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
             # and the value is the numpy array to feed to it.
             feed_dict = {
                 tf_train_dataset: batch_data,
-                tf_train_labels: batch_labels
+                tf_train_labels: batch_labels,
+                beta_regul: regularization
             }
             _, loss_value, predictions = sess.run([train_op, loss_op, train_prediction], feed_dict=feed_dict)
 
             # Update the events file
             if step % 100 == 0:
                 # Update the events file.
-                print("{} {}".format("Summary", summary))
                 summary_str = sess.run(summary, feed_dict=feed_dict)
                 summary_writer.add_summary(summary_str, step)
                 summary_writer.flush()
@@ -83,10 +83,16 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
             # Update to stdout
             if step % 500 == 0:
                 print('{} {}: {}'.format('Relu loss at step', step, loss_value))
-                print('{}: {}'.format('Relu Accuracy', evaluation(predictions, batch_labels)))
-                print('{}: {}'.format('Relu Validation Accuracy', evaluation(valid_prediction.eval(), valid_labels)))
+                prediction_eval = sess.run(evaluation(predictions, batch_labels))
+                precision = float(prediction_eval) / BATCH_SIZE
+                print('{}: {}'.format('Relu Accuracy', precision))
+                prediction_valid_eval = sess.run(evaluation(valid_prediction.eval(), valid_labels))
+                precision_valid = float(prediction_valid_eval) / BATCH_SIZE
+                print('{}: {}'.format('Relu Validation Accuracy', precision_valid))
 
                 checkpoint_file = os.path.join(log_dir, 'model.ckpt')
                 saver.save(sess, checkpoint_file, global_step=step)
 
-        print('{}: {}'.format('Relu Test Accuracy', evaluation(test_prediction.eval(), test_labels)))
+        prediction_test_eval = sess.run(evaluation(test_prediction.eval(), test_labels))
+        precision_test = float(prediction_test_eval) / len(test_dataset)
+        print('{}: {}'.format('Relu Test Accuracy', precision_test))
