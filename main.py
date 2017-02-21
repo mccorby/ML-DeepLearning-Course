@@ -47,4 +47,4 @@ print('Test set', test_dataset.shape, test_labels.shape)
 log_report_dir = os.path.join(data_root, '../reports')
 reg_beta = 0.001
 fully_connected_relu.run_training(TRAINING_RATE, reg_beta, train_dataset, train_labels, valid_dataset, valid_labels,
-                                  test_dataset, test_labels, log_report_dir)
+                                  test_dataset, test_labels, log_report_dir, True)

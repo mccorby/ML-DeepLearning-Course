@@ -9,7 +9,7 @@ MAX_STEPS = 3001
 
 
 def run_training(training_rate, reg_beta, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels,
-                 log_dir):
+                 log_dir, overfitting=False):
     # Get the sets of images and labels for training, validation, and
     # test on MNIST.
 
@@ -59,7 +59,11 @@ def run_training(training_rate, reg_beta, train_dataset, train_labels, valid_dat
 
             # Pick an offset within the training data, which has been randomized.
             # Note: we could use better randomization across epochs.
-            offset = (step * BATCH_SIZE) % (train_labels.shape[0] - BATCH_SIZE)
+            # When overfitting we can see that the accuracy of the prediction is 100%!!
+            if overfitting:
+                offset = step % BATCH_SIZE
+            else:
+                offset = (step * BATCH_SIZE) % (train_labels.shape[0] - BATCH_SIZE)
             # Generate a mini batch
             batch_data = train_dataset[offset:(offset + BATCH_SIZE), :]
             batch_labels = train_labels[offset:(offset + BATCH_SIZE), :]
