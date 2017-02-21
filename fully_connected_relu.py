@@ -36,8 +36,8 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
                                                                          tf_test_dataset, weights, biases)
 
         # Add the Op to compare the logits to the labels during evaluation.
-        eval_correct = evaluation(logits, tf_train_labels)
-        tf.summary.scalar('Logits Eval', eval_correct)
+        # eval_correct = evaluation(logits, tf_train_labels)
+        tf.summary.scalar('Logits Eval', 1)
 
     # Let's run it
     with tf.Session(graph=graph) as sess:
@@ -75,7 +75,6 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
             # Update the events file
             if step % 100 == 0:
                 # Update the events file.
-                print("{} {}".format("Summary", summary))
                 summary_str = sess.run(summary, feed_dict=feed_dict)
                 summary_writer.add_summary(summary_str, step)
                 summary_writer.flush()
