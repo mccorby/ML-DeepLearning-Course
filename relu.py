@@ -11,7 +11,7 @@ NUM_LABELS = 10
 LAYER_SIZE = 1024
 
 
-def inference(tf_train_dataset):
+def inference(tf_train_dataset, dropout=0.):
     """
     Builds the graph as far as is required for running the network forward to make predictions
     :param tf_train_dataset:
@@ -33,7 +33,11 @@ def inference(tf_train_dataset):
     }
 
     hidden = tf.nn.relu(tf.matmul(tf_train_dataset, weights_1) + biases_1)
-    logits = tf.matmul(hidden, weights_2) + biases_2
+    if dropout > 0.:
+        dropout_val = tf.nn.dropout(hidden, dropout)
+        logits = tf.matmul(dropout_val, weights_2) + biases_2
+    else:
+        logits = tf.matmul(hidden, weights_2) + biases_2
 
     return logits, weights, biases
 

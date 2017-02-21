@@ -9,7 +9,7 @@ MAX_STEPS = 3001
 
 
 def run_training(training_rate, reg_beta, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels,
-                 log_dir, overfitting=False):
+                 log_dir, overfitting=False, dropout=0.):
     # Get the sets of images and labels for training, validation, and
     # test on MNIST.
 
@@ -24,7 +24,7 @@ def run_training(training_rate, reg_beta, train_dataset, train_labels, valid_dat
         tf_test_dataset = tf.constant(test_dataset, name='test_dataset')
 
         # Build a Graph that computes predictions from the inference model.
-        logits, weights, biases = inference(tf_train_dataset)
+        logits, weights, biases = inference(tf_train_dataset, dropout)
 
         # Add the ops for loss calculation to the graph
         loss_op = loss(logits, tf_train_labels, reg_beta, weights)
