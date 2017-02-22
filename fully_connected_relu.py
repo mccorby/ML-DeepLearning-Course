@@ -84,7 +84,7 @@ def run_training(training_rate, reg_beta, train_dataset, train_labels, valid_dat
                 summary_writer.flush()
 
             # Update to stdout
-            if step % 500 == 0:
+            if step % 100 == 0:
                 print('{} {}: {}'.format('Relu loss at step', step, loss_value))
                 print('{}: {}'.format('Relu Accuracy', evaluation(predictions, batch_labels)))
                 print('{}: {}'.format('Relu Validation Accuracy', evaluation(valid_prediction.eval(), valid_labels)))

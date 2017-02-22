@@ -15,6 +15,7 @@ def inference(tf_train_dataset, dropout=0.):
     """
     Builds the graph as far as is required for running the network forward to make predictions
     :param tf_train_dataset:
+    :param dropout
     :return: Output tensor with the computed logits, weights and biases used in the different layers
     """
     weights_1 = tf.Variable(tf.truncated_normal([IMAGE_PIXELS, LAYER_SIZE], stddev=0.1))

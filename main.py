@@ -1,6 +1,7 @@
 import fully_connected_logreg
 import logistic_regression
 import fully_connected_relu
+import fully_connected_nn_2
 import os
 from six.moves import cPickle as pickle
 import numpy as np
@@ -28,8 +29,6 @@ def reformat(dataset, labels):
     return dataset, labels
 
 
-TRAINING_RATE = 0.5
-
 data_root = '/Users/jco59/ML/WorkingData/DL-Course/assignment1'
 train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels = load_data(data_root)
 
@@ -41,11 +40,20 @@ print('Training set', train_dataset.shape, train_labels.shape)
 print('Validation set', valid_dataset.shape, valid_labels.shape)
 print('Test set', test_dataset.shape, test_labels.shape)
 
+# Configuration
+# TODO Configuration to be external or passed through command line
+TRAINING_RATE = 0.5
+log_report_dir = os.path.join(data_root, '../reports')
+reg_beta = 1e-3
+dropout = 0.0
+overfitting = False
+
+
 # fully_connected_logreg.run_training(TRAINING_RATE, train_dataset, train_labels, valid_dataset, valid_labels,
 #                                    test_dataset, test_labels)
 
-log_report_dir = os.path.join(data_root, '../reports')
-reg_beta = 0.0
-dropout = 0.5
-fully_connected_relu.run_training(TRAINING_RATE, reg_beta, train_dataset, train_labels, valid_dataset, valid_labels,
-                                  test_dataset, test_labels, log_report_dir, False, dropout)
+# fully_connected_relu.run_training(TRAINING_RATE, reg_beta, train_dataset, train_labels, valid_dataset, valid_labels,
+#                                  test_dataset, test_labels, log_report_dir, overfitting, dropout)
+
+fully_connected_nn_2.run_training(TRAINING_RATE, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels,
+                                  reg_beta)
