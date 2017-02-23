@@ -35,6 +35,28 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
         train_prediction, valid_prediction, test_prediction = prediction(tf_valid_dataset,
                                                                          tf_test_dataset, variables)
 
+        saver = tf.train.Saver()
+        # weights = variables['weights']
+        # biases = variables['biases']
+        #
+        # weights_1 = weights['hidden_1']
+        # weights_2 = weights['hidden_2']
+        # weights_3 = weights['hidden_3']
+        # weights_4 = weights['out']
+        # biases_1 = biases['hidden_1']
+        # biases_2 = biases['hidden_2']
+        # biases_3 = biases['hidden_3']
+        # biases_4 = biases['out']
+        #
+        # tf.add_to_collection('vars', weights_1)
+        # tf.add_to_collection('vars', weights_2)
+        # tf.add_to_collection('vars', weights_3)
+        # tf.add_to_collection('vars', weights_4)
+        # tf.add_to_collection('vars', biases_1)
+        # tf.add_to_collection('vars', biases_2)
+        # tf.add_to_collection('vars', biases_3)
+        # tf.add_to_collection('vars', biases_4)
+
     with tf.Session(graph=graph) as sess:
         # Init handler
         init = tf.global_variables_initializer()
@@ -63,5 +85,5 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
                 print('{}: {}'.format('NN 2 Layers Accuracy', evaluation(predictions, batch_labels)))
                 print('{}: {}'.format('NN 2 Layers Validation Accuracy',
                                       evaluation(valid_prediction.eval(), valid_labels)))
-
+        saver.save(sess, './save/nn_2_layer.ckpt')
         print('{}: {}'.format('NN 2 Layers Test Accuracy', evaluation(test_prediction.eval(), test_labels)))
