@@ -3,7 +3,15 @@ from scipy import ndimage
 import tensorflow as tf
 from nn_2_layers import *
 
+
+BATCH_SIZE = 128
 IMAGE_SIZE = 28
+IMAGE_PIXELS = IMAGE_SIZE * IMAGE_SIZE
+NUM_LABELS = 10
+LAYER1_NODES = 1024
+LAYER2_NODES = 256
+LAYER3_NODES = 128
+
 PIXEL_DEPTH = 255.0  # Number of levels per pixel.
 
 
@@ -22,25 +30,6 @@ def load_letter(image_file):
     return dataset
 
 
-# def predict(image_file):
-#     sess = tf.Session()
-#     new_saver = tf.train.import_meta_graph('./save/nn_2_layer')
-#     new_saver.restore(sess, tf.train.latest_checkpoint('./save/checkpoint'))
-#     all_vars = tf.get_collection('vars')
-#     for v in all_vars:
-#         v_ = sess.run(v)
-#         print(v_)
-
-BATCH_SIZE = 128
-
-IMAGE_SIZE = 28
-IMAGE_PIXELS = IMAGE_SIZE * IMAGE_SIZE
-NUM_LABELS = 10
-LAYER1_NODES = 1024
-LAYER2_NODES = 256
-LAYER3_NODES = 128
-
-
 def predict():
 
     # Build the graph
@@ -51,23 +40,8 @@ def predict():
         # at run time with a training minibatch.
         tf_train_dataset = tf.placeholder(tf.float32,
                                           shape=(BATCH_SIZE, IMAGE_PIXELS))
-        # tf_train_labels = tf.placeholder(tf.float32, shape=(BATCH_SIZE, NUM_LABELS))
-        # tf_valid_dataset = tf.constant(valid_dataset)
-        # tf_test_dataset = tf.constant(test_dataset)
-        # global_step = tf.Variable(0)
-
         # Variables.
         variables = inference(tf_train_dataset)
-        # Training computation.
-        # loss_op = loss(tf_train_labels, variables, 0.05)
-
-        # Optimizer.
-        # learning_rate = tf.train.exponential_decay(training_rate, global_step, 1000, 0.65, staircase=True)
-        # train_op = training(loss_op, learning_rate, global_step)
-
-        # Predictions for the training, validation, and test data.
-        # train_prediction, valid_prediction, test_prediction = prediction(tf_valid_dataset,
-        #                                                                  tf_test_dataset, variables)
 
         saver = tf.train.Saver()
 
