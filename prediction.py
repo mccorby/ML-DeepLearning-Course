@@ -13,6 +13,7 @@ LAYER2_NODES = 256
 LAYER3_NODES = 128
 
 PIXEL_DEPTH = 255.0  # Number of levels per pixel.
+LETTERS = 'ABCDEFGHIJ'
 
 
 def load_letter(image_file):
@@ -30,7 +31,7 @@ def load_letter(image_file):
     return dataset
 
 
-def predict():
+def predict(dataset):
 
     # Build the graph
     graph = tf.Graph()
@@ -38,10 +39,9 @@ def predict():
 
         # Input data. For the training data, we use a placeholder that will be fed
         # at run time with a training minibatch.
-        tf_train_dataset = tf.placeholder(tf.float32,
-                                          shape=(BATCH_SIZE, IMAGE_PIXELS))
+        tf_dataset = tf.placeholder(tf.float32, shape=(1, IMAGE_PIXELS))
         # Variables.
-        variables = inference(tf_train_dataset)
+        variables = inference(tf_dataset)
 
         saver = tf.train.Saver()
 
@@ -50,8 +50,18 @@ def predict():
         # Init handler
         print("Model restored.")
         print('Initialized')
-        w1 = sess.run(variables['weights']['hidden_1'])
-        print(w1)
+        feed_dict = {
+            tf_dataset: dataset,
+        }
+        predictions = sess.run(variables['layers'][3], feed_dict=feed_dict)
+        print(predictions)
+        print(LETTERS[np.argmax(predictions)])
 
 
-predict()
+dataset = load_letter('./letters/letter.png')
+print(dataset.shape)
+flat_dataset = np.zeros(shape=(1, 784))
+flat_dataset[0, :] = dataset.ravel()
+print(flat_dataset.shape)
+predict(flat_dataset)
+
