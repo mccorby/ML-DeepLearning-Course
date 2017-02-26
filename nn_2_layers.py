@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+from tensorflow.python.ops import math_ops
 
 IMAGE_SIZE = 28
 IMAGE_PIXELS = IMAGE_SIZE * IMAGE_SIZE
@@ -52,9 +53,9 @@ def inference(tf_train_dataset):
     }
 
     # Training computations
-    layer_1 = tf.nn.relu(tf.matmul(tf_train_dataset, weights_1) + biases_1)
-    layer_2 = tf.nn.relu(tf.matmul(layer_1, weights_2) + biases_2)
-    layer_3 = tf.nn.relu(tf.matmul(layer_2, weights_3) + biases_3)
+    layer_1 = tf.nn.relu(tf.matmul(tf_train_dataset, weights_1) + biases_1, name='layer_1')
+    layer_2 = tf.nn.relu(tf.matmul(layer_1, weights_2) + biases_2, name='layer_2')
+    layer_3 = tf.nn.relu(tf.matmul(layer_2, weights_3) + biases_3, name='layer_3')
     logits = tf.matmul(layer_3, weights_4) + biases_4
 
     inference_components = {
@@ -136,7 +137,7 @@ def prediction(tf_valid_dataset, tf_test_dataset, inference_components):
     test_l3 = tf.nn.relu(tf.matmul(test_l2, weights_3) + biases_3)
     test_logits = tf.matmul(test_l3, weights_4) + biases_4
 
-    train_prediction = tf.nn.softmax(logits)
+    train_prediction = tf.nn.softmax(logits, name='logits')
     valid_prediction = tf.nn.softmax(valid_logits)
     test_prediction = tf.nn.softmax(test_logits)
 

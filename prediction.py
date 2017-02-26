@@ -3,7 +3,6 @@ from scipy import ndimage
 import tensorflow as tf
 from nn_2_layers import *
 
-
 BATCH_SIZE = 128
 IMAGE_SIZE = 28
 IMAGE_PIXELS = IMAGE_SIZE * IMAGE_SIZE
@@ -21,7 +20,10 @@ def load_letter(image_file):
     dataset = np.ndarray(shape=(IMAGE_SIZE, IMAGE_SIZE), dtype=np.float32)
 
     try:
-        image_data = (ndimage.imread(image_file).astype(float) - PIXEL_DEPTH / 2) / PIXEL_DEPTH
+        # image_data = (ndimage.imread(image_file).astype(float) - PIXEL_DEPTH / 2) / PIXEL_DEPTH
+        image_data = ndimage.imread(image_file).astype(float)
+        dataset = image_data[:, [0, 1]]
+        print(dataset.shape)
         if image_data.shape != (IMAGE_SIZE, IMAGE_SIZE):
             raise Exception('Unexpected image shape: %s' % str(image_data.shape))
         dataset = image_data
@@ -32,11 +34,9 @@ def load_letter(image_file):
 
 
 def predict(dataset):
-
     # Build the graph
     graph = tf.Graph()
     with graph.as_default():
-
         # Input data. For the training data, we use a placeholder that will be fed
         # at run time with a training minibatch.
         tf_dataset = tf.placeholder(tf.float32, shape=(1, IMAGE_PIXELS))
@@ -47,6 +47,7 @@ def predict(dataset):
 
     with tf.Session(graph=graph) as sess:
         saver.restore(sess, './save/nn_2_layer.ckpt')
+
         # Init handler
         print("Model restored.")
         print('Initialized')
@@ -64,4 +65,3 @@ flat_dataset = np.zeros(shape=(1, 784))
 flat_dataset[0, :] = dataset.ravel()
 print(flat_dataset.shape)
 predict(flat_dataset)
-
