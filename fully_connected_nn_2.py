@@ -68,7 +68,7 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
                                       evaluation(valid_prediction.eval(), valid_labels)))
         print('{}: {}'.format('NN 2 Layers Test Accuracy', evaluation(test_prediction.eval(), test_labels)))
         saver.save(sess, './save/nn_2_layer.ckpt')
-        convert_to_protobuf(sess, saver)
+        # convert_to_protobuf(sess, saver)
 
 
 def convert_to_protobuf(sess, saver):

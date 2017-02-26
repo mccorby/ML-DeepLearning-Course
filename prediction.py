@@ -1,6 +1,8 @@
 import numpy as np
 from scipy import ndimage
 import tensorflow as tf
+from tensorflow.core.framework import graph_pb2
+
 from nn_2_layers import *
 
 BATCH_SIZE = 128
@@ -59,9 +61,33 @@ def predict(dataset):
         print(LETTERS[np.argmax(predictions)])
 
 
+def predict_pb(dataset):
+    graph_def = graph_pb2.GraphDef()
+    with open('./tmp/output_graph.pb', "rb") as f:
+        graph_def.ParseFromString(f.read)
+
+    for node in graph_def.node:
+        print(node)
+
+    tf_dataset = tf.placeholder(tf.float32, shape=(1, IMAGE_PIXELS))
+
+    with tf.Session(graph=graph_def) as sess:
+        # saver.restore(sess, './save/nn_2_layer.ckpt')
+
+        # Init handler
+        print("Model restored.")
+        print('Initialized')
+        feed_dict = {
+            tf_dataset: dataset,
+        }
+        predictions = sess.run("", feed_dict=feed_dict)
+        print(predictions)
+        print(LETTERS[np.argmax(predictions)])
+
 dataset = load_letter('./letters/letter.png')
 print(dataset.shape)
 flat_dataset = np.zeros(shape=(1, 784))
 flat_dataset[0, :] = dataset.ravel()
 print(flat_dataset.shape)
-predict(flat_dataset)
+predict_pb(flat_dataset)
+
