@@ -56,7 +56,7 @@ def inference(tf_train_dataset):
     layer_1 = tf.nn.relu(tf.matmul(tf_train_dataset, weights_1) + biases_1, name='layer_1')
     layer_2 = tf.nn.relu(tf.matmul(layer_1, weights_2) + biases_2, name='layer_2')
     layer_3 = tf.nn.relu(tf.matmul(layer_2, weights_3) + biases_3, name='layer_3')
-    logits = tf.matmul(layer_3, weights_4) + biases_4
+    logits = tf.add(tf.matmul(layer_3, weights_4), biases_4, name='logits')
 
     inference_components = {
         'weights': weights,
@@ -137,7 +137,7 @@ def prediction(tf_valid_dataset, tf_test_dataset, inference_components):
     test_l3 = tf.nn.relu(tf.matmul(test_l2, weights_3) + biases_3)
     test_logits = tf.matmul(test_l3, weights_4) + biases_4
 
-    train_prediction = tf.nn.softmax(logits, name='logits')
+    train_prediction = tf.nn.softmax(logits, name='output_node')
     valid_prediction = tf.nn.softmax(valid_logits)
     test_prediction = tf.nn.softmax(test_logits)
 

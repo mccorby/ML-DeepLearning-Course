@@ -17,7 +17,7 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
         # Input data. For the training data, we use a placeholder that will be fed
         # at run time with a training minibatch.
         tf_train_dataset = tf.placeholder(tf.float32,
-                                          shape=(BATCH_SIZE, IMAGE_PIXELS))
+                                          shape=(BATCH_SIZE, IMAGE_PIXELS), name='input_node')
         tf_train_labels = tf.placeholder(tf.float32, shape=(BATCH_SIZE, NUM_LABELS))
         tf_valid_dataset = tf.constant(valid_dataset)
         tf_test_dataset = tf.constant(test_dataset)
