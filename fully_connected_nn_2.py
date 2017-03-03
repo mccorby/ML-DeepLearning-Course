@@ -68,24 +68,3 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
                                       evaluation(valid_prediction.eval(), valid_labels)))
         print('{}: {}'.format('NN 2 Layers Test Accuracy', evaluation(test_prediction.eval(), test_labels)))
         saver.save(sess, './save/nn_2_layer.ckpt')
-        # convert_to_protobuf(sess, saver)
-
-
-def convert_to_protobuf(sess, saver):
-    input_graph_name = "inputGraph"
-    input_saver_def_path = ""
-    input_binary = False
-    checkpoint_path = './save/nn_2_layer.ckpt'
-    output_node_names = 'logits'
-    restore_op_name = "save/restore_all"
-    filename_tensor_name = "save/Const:0"
-    output_graph_name = "output_graph.pb"
-    output_graph_path = os.path.join("./tmp", output_graph_name)
-    clear_devices = False
-
-    tf.train.write_graph(sess.graph, "./tmp", input_graph_name)
-    input_graph_path = os.path.join("./tmp", input_graph_name)
-    freeze_graph.freeze_graph(input_graph_path, input_saver_def_path,
-                              input_binary, checkpoint_path, output_node_names,
-                              restore_op_name, filename_tensor_name,
-                              output_graph_path, clear_devices, "")
