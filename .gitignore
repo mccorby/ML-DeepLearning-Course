@@ -11,6 +11,7 @@ __pycache__/
 *.iml
 
 save/*
+save*/*
 
 # Local config file
 config/local_config.json
