@@ -1,5 +1,5 @@
 from convnet import reformat
-from fully_connected_convnet import *
+from convnet_network import *
 from load_data import load_data
 
 # TODO data_root from config file

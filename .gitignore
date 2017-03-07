@@ -10,8 +10,12 @@ __pycache__/
 .idea
 *.iml
 
-save/*
 save*/*
 
 # Local config file
 config/local_config.json
+assignment-1/notMNIST_large/
+letters/
+save-backup/
+save/
+save_convnet/
