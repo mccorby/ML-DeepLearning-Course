@@ -39,9 +39,13 @@ def run_training(train_dataset, train_labels, valid_dataset, valid_labels, test_
         optimizer = training(0.05, loss_value)
 
         # Predictions for the training, validation, and test data.
-        train_prediction = tf.nn.softmax(logits)
-        valid_prediction = tf.nn.softmax(model(tf_valid_dataset, variables))
-        test_prediction = tf.nn.softmax(model(tf_test_dataset, variables))
+        train_prediction, valid_prediction, test_prediction = prediction(tf_train_dataset, tf_valid_dataset,
+                                                                         tf_test_dataset, variables)
+        # train_prediction = tf.nn.softmax(logits)
+        # valid_prediction = tf.nn.softmax(model(tf_valid_dataset, variables))
+        # test_prediction = tf.nn.softmax(model(tf_test_dataset, variables))
+
+        saver = tf.train.Saver()
 
     num_steps = 1001
 
@@ -59,3 +63,4 @@ def run_training(train_dataset, train_labels, valid_dataset, valid_labels, test_
                 print('Minibatch accuracy: %.1f%%' % evaluation(predictions, batch_labels))
                 print('Validation accuracy: %.1f%%' % evaluation(valid_prediction.eval(), valid_labels))
         print('Test accuracy: %.1f%%' % evaluation(test_prediction.eval(), test_labels))
+        saver.save(session, '../save_convnet/convnet.ckpt')
