@@ -1,7 +1,4 @@
-import numpy as np
 from scipy import ndimage
-import tensorflow as tf
-from tensorflow.core.framework import graph_pb2
 
 from nn_2_layers import *
 
@@ -48,7 +45,7 @@ def predict(dataset):
         saver = tf.train.Saver()
 
     with tf.Session(graph=graph) as sess:
-        saver.restore(sess, './save/nn_2_layer.ckpt')
+        saver.restore(sess, '../save/nn_2_layer.ckpt')
 
         # Init handler
         print("Model restored.")
@@ -88,7 +85,7 @@ def predict_pb(dataset):
 def retrieve_graph():
     # We load the protobuf file from the disk and parse it to retrieve the
     # unserialized graph_def
-    with tf.gfile.GFile("./tmp/frozen_model.pb", "rb") as f:
+    with tf.gfile.GFile("../tmp/frozen_model.pb", "rb") as f:
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
 
@@ -105,10 +102,11 @@ def retrieve_graph():
         )
     return graph
 
-dataset = load_letter('./letters/letter.png')
+dataset = load_letter('../letters/letter.png')
 print(dataset.shape)
-flat_dataset = np.zeros(shape=(128, 784))
-flat_dataset[0, :] = dataset.ravel()
-print(flat_dataset.shape)
-predict_pb(flat_dataset)
+# flat_dataset = np.zeros(shape=(128, 784))
+# flat_dataset[0, :] = dataset.ravel()
+# print(flat_dataset.shape)
+# predict_pb(flat_dataset)
 
+predict_pb(dataset.ravel())

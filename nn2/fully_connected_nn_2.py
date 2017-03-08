@@ -1,7 +1,5 @@
 # TODO PEP-8 import
 from nn_2_layers import *
-from tensorflow.python.tools import freeze_graph
-import os
 
 BATCH_SIZE = 128
 MAX_STEPS = 9001
@@ -17,8 +15,8 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
         # Input data. For the training data, we use a placeholder that will be fed
         # at run time with a training minibatch.
         tf_train_dataset = tf.placeholder(tf.float32,
-                                          shape=(BATCH_SIZE, IMAGE_PIXELS), name='input_node')
-        tf_train_labels = tf.placeholder(tf.float32, shape=(BATCH_SIZE, NUM_LABELS))
+                                          shape=(None, IMAGE_PIXELS), name='input_node')
+        tf_train_labels = tf.placeholder(tf.float32, shape=(None, NUM_LABELS))
         tf_valid_dataset = tf.constant(valid_dataset)
         tf_test_dataset = tf.constant(test_dataset)
         global_step = tf.Variable(0)
@@ -67,4 +65,4 @@ def run_training(training_rate, train_dataset, train_labels, valid_dataset, vali
                 print('{}: {}'.format('NN 2 Layers Validation Accuracy',
                                       evaluation(valid_prediction.eval(), valid_labels)))
         print('{}: {}'.format('NN 2 Layers Test Accuracy', evaluation(test_prediction.eval(), test_labels)))
-        saver.save(sess, './save/nn_2_layer.ckpt')
+        saver.save(sess, '../save/nn_2_layer.ckpt')

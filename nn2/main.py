@@ -1,10 +1,20 @@
-import fully_connected_logreg
-import logistic_regression
-import fully_connected_relu
-import fully_connected_nn_2
+import numpy as np
 import os
 from six.moves import cPickle as pickle
-import numpy as np
+
+# import logistic_regression
+import fully_connected_nn_2
+
+# Configuration
+# TODO Configuration to be external or passed through command line
+data_root = '/Users/jco59/ML/WorkingData/DL-Course/assignment1'
+NUM_LABELS = 10
+IMAGE_PIXELS = 28
+TRAINING_RATE = 0.5
+log_report_dir = os.path.join(data_root, '../reports')
+reg_beta = 1e-3
+dropout = 0.0
+overfitting = False
 
 
 def load_data(data_root):
@@ -23,13 +33,12 @@ def load_data(data_root):
 
 
 def reformat(dataset, labels):
-    dataset = dataset.reshape((-1, logistic_regression.IMAGE_PIXELS)).astype(np.float32)
+    dataset = dataset.reshape((-1, IMAGE_PIXELS)).astype(np.float32)
     # Map 0 to [1.0, 0.0, 0.0 ...], 1 to [0.0, 1.0, 0.0 ...]
-    labels = (np.arange(logistic_regression.NUM_LABELS) == labels[:, None]).astype(np.float32)
+    labels = (np.arange(NUM_LABELS) == labels[:, None]).astype(np.float32)
     return dataset, labels
 
 
-data_root = '/Users/jco59/ML/WorkingData/DL-Course/assignment1'
 train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels = load_data(data_root)
 
 train_dataset, train_labels = reformat(train_dataset, train_labels)
@@ -39,14 +48,6 @@ test_dataset, test_labels = reformat(test_dataset, test_labels)
 print('Training set', train_dataset.shape, train_labels.shape)
 print('Validation set', valid_dataset.shape, valid_labels.shape)
 print('Test set', test_dataset.shape, test_labels.shape)
-
-# Configuration
-# TODO Configuration to be external or passed through command line
-TRAINING_RATE = 0.5
-log_report_dir = os.path.join(data_root, '../reports')
-reg_beta = 1e-3
-dropout = 0.0
-overfitting = False
 
 
 # fully_connected_logreg.run_training(TRAINING_RATE, train_dataset, train_labels, valid_dataset, valid_labels,

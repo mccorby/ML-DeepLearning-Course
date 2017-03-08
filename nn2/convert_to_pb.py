@@ -2,9 +2,9 @@ import tensorflow as tf
 from tensorflow.python.tools import freeze_graph
 import os
 
-input_folder = './save_convnet'  # './save'
-input_ckpt = './save_convnet/convnet.ckpt'  # './save/nn_2_layer.ckpt'
-output_graph = "./tmp/convnet_model.pb"
+input_folder = '../save'  # './save_convnet'
+input_ckpt =  '../save/nn_2_layer.ckpt'  # './save_convnet/convnet.ckpt'
+output_graph = "../tmp/nn2_model.pb"
 
 # We retrieve our checkpoint fullpath
 checkpoint = tf.train.get_checkpoint_state(input_folder)
