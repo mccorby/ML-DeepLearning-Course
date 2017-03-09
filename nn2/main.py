@@ -25,7 +25,7 @@ with open_config_if_exists('nn2_shared_config.json') as (config_file, err):
 data_root = local_config_data['dataRoot']
 
 NUM_LABELS = shared_config_data['outputSize']
-IMAGE_PIXELS = shared_config_data['imageSize']
+IMAGE_PIXELS = shared_config_data['imageSize'] * shared_config_data['imageSize']
 
 TRAINING_RATE = 0.5
 reg_beta = 1e-3
