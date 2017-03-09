@@ -1,0 +1,15 @@
+{
+  "modelName": "NN 2 Hidden",
+  "imageSize": 28,
+  "batchSize": 128,
+  "inputNodeName": "input_node",
+  "outputNodeName": "output_node",
+  "outputNodeNames": [
+    "output_node"
+  ],
+  "outputSize": 10,
+  "modelFileName": "nn2_model.pb",
+  "inputSizes": [
+    128, 784
+  ]
+}

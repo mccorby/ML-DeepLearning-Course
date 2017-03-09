@@ -2,23 +2,39 @@ import numpy as np
 import os
 from six.moves import cPickle as pickle
 
-# import logistic_regression
 import fully_connected_nn_2
 
-# Configuration
-# TODO Configuration to be external or passed through command line
-data_root = '/Users/jco59/ML/WorkingData/DL-Course/assignment1'
-NUM_LABELS = 10
-IMAGE_PIXELS = 28
+from config import open_config_if_exists
+import json
+
+
+# Load the local config file
+with open_config_if_exists('../config/local_config.json') as (config_file, err):
+    if err:
+        print('Local Config file is not defined. Expected at ./config/local_config.json')
+    else:
+        local_config_data = json.load(config_file)
+
+with open_config_if_exists('nn2_shared_config.json') as (config_file, err):
+    if err:
+        print('Shared Config file is not defined. Expected at ./config/local_config.json')
+    else:
+        shared_config_data = json.load(config_file)
+
+
+data_root = local_config_data['dataRoot']
+
+NUM_LABELS = shared_config_data['outputSize']
+IMAGE_PIXELS = shared_config_data['imageSize']
+
 TRAINING_RATE = 0.5
-log_report_dir = os.path.join(data_root, '../reports')
 reg_beta = 1e-3
 dropout = 0.0
 overfitting = False
 
 
-def load_data(data_root):
-    pickle_file = os.path.join(data_root, 'notMNIST.pickle')
+def load_data(data_dir):
+    pickle_file = os.path.join(data_dir, 'notMNIST.pickle')
 
     with open(pickle_file, 'rb') as f:
         save = pickle.load(f)
@@ -50,11 +66,5 @@ print('Validation set', valid_dataset.shape, valid_labels.shape)
 print('Test set', test_dataset.shape, test_labels.shape)
 
 
-# fully_connected_logreg.run_training(TRAINING_RATE, train_dataset, train_labels, valid_dataset, valid_labels,
-#                                    test_dataset, test_labels)
-
-# fully_connected_relu.run_training(TRAINING_RATE, reg_beta, train_dataset, train_labels, valid_dataset, valid_labels,
-#                                  test_dataset, test_labels, log_report_dir, overfitting, dropout)
-
-fully_connected_nn_2.run_training(TRAINING_RATE, train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels,
-                                  reg_beta)
+fully_connected_nn_2.run_training(shared_config_data, TRAINING_RATE, train_dataset, train_labels, valid_dataset,
+                                  valid_labels, test_dataset, test_labels, reg_beta)
