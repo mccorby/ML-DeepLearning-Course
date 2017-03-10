@@ -1,10 +1,6 @@
 import numpy as np
 import tensorflow as tf
 
-# Reformat into a TensorFlow-friendly shape:
-# convolutions need the image data formatted as a cube (width by height by #channels)
-# labels as float 1-hot encodings.
-
 # TODO These values from shared config
 image_size = 28
 num_labels = 10
@@ -15,9 +11,12 @@ num_hidden = 64
 
 
 # TODO Refactor. This function "private"? or somewhere else
+# Reformat into a TensorFlow-friendly shape:
+# - convolutions need the image data formatted as a cube (width by height by #channels)
+# - labels as float 1-hot encodings.
+
 def reformat(dataset, labels):
-    dataset = dataset.reshape(
-        (-1, image_size, image_size, num_channels)).astype(np.float32)
+    dataset = dataset.reshape((-1, image_size, image_size, num_channels)).astype(np.float32)
     labels = (np.arange(num_labels) == labels[:, None]).astype(np.float32)
     return dataset, labels
 
@@ -62,7 +61,7 @@ def inference():
     return inference_components
 
 
-def model(data, inference_components):
+def model(data, inference_components, use_pooling=False):
     weights = inference_components['weights']
     biases = inference_components['biases']
 
@@ -75,14 +74,36 @@ def model(data, inference_components):
     biases_3 = biases['hidden_3']
     biases_4 = biases['out']
 
-    stride = [1, 2, 2, 1] # tf.nn.max_pool(1, 2, 2, )
-    conv = tf.nn.conv2d(data, weights_1, stride, padding='SAME')
-    hidden = tf.nn.relu(conv + biases_1)
-    conv = tf.nn.conv2d(hidden, weights_2, stride, padding='SAME')
-    hidden = tf.nn.relu(conv + biases_2)
-    shape = hidden.get_shape().as_list()
-    reshape = tf.reshape(hidden, [shape[0], shape[1] * shape[2] * shape[3]])
+    print('{} {}'.format('Building model with Pooling?', use_pooling))
+
+    # A stride = [1, 1, 1, 1] applies the filter to an image patch at every offset
+    # strides = [1, 2, 2, 1] applies the filter to every other image patch in each dimension, etc.
+
+    if use_pooling:
+        # Each pooling operation adds to the conv operation
+        default_stride = [1, 1, 1, 1]
+
+        conv = tf.nn.conv2d(data, weights_1, default_stride, padding='SAME')
+        hidden = tf.nn.relu(conv + biases_1)
+
+        pool_1 = tf.nn.max_pool(hidden, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+        conv = tf.nn.conv2d(pool_1, weights_2, default_stride, padding='SAME')
+        hidden = tf.nn.relu(conv + biases_2)
+
+        pool_2 = tf.nn.max_pool(hidden, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+        shape = pool_2.get_shape().as_list()
+        reshape = tf.reshape(pool_2, [shape[0], shape[1] * shape[2] * shape[3]])
+    else:
+        stride = [1, 2, 2, 1]
+        conv = tf.nn.conv2d(data, weights_1, stride, padding='SAME')
+        hidden = tf.nn.relu(conv + biases_1)
+        conv = tf.nn.conv2d(hidden, weights_2, stride, padding='SAME')
+        hidden = tf.nn.relu(conv + biases_2)
+        shape = hidden.get_shape().as_list()
+        reshape = tf.reshape(hidden, [shape[0], shape[1] * shape[2] * shape[3]])
+
     hidden = tf.nn.relu(tf.matmul(reshape, weights_3) + biases_3)
+
     return tf.matmul(hidden, weights_4) + biases_4
 
 
@@ -96,11 +117,11 @@ def training(learning_rate, loss_value):
     return optimizer
 
 
-def prediction(tf_train_dataset, tf_valid_dataset, tf_test_dataset, inference_components):
+def prediction(tf_train_dataset, tf_valid_dataset, tf_test_dataset, inference_components, use_pooling=False):
 
-    valid_logits = model(tf_valid_dataset, inference_components)
-    test_logits = model(tf_test_dataset, inference_components)
-    logits = model(tf_train_dataset, inference_components)
+    valid_logits = model(tf_valid_dataset, inference_components, use_pooling)
+    test_logits = model(tf_test_dataset, inference_components, use_pooling)
+    logits = model(tf_train_dataset, inference_components, use_pooling)
 
     train_prediction = tf.nn.softmax(logits, name='output_node')
     valid_prediction = tf.nn.softmax(valid_logits)

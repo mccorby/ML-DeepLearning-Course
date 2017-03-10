@@ -15,4 +15,4 @@ print('Validation set', valid_dataset.shape, valid_labels.shape)
 print('Test set', test_dataset.shape, test_labels.shape)
 
 
-run_training(train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels)
+run_training(train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels, use_pooling=True)
