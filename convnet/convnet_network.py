@@ -16,7 +16,7 @@ depth = 16
 num_hidden = 64
 
 
-def run_training(train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels):
+def run_training(train_dataset, train_labels, valid_dataset, valid_labels, test_dataset, test_labels, use_pooling=False):
     graph = tf.Graph()
 
     with graph.as_default():
@@ -31,7 +31,7 @@ def run_training(train_dataset, train_labels, valid_dataset, valid_labels, test_
         variables = inference()
 
         # Training computation.
-        logits = model(tf_train_dataset, variables)
+        logits = model(tf_train_dataset, variables, use_pooling)
 
         loss_value = loss(tf_train_labels, logits)
 
@@ -40,10 +40,7 @@ def run_training(train_dataset, train_labels, valid_dataset, valid_labels, test_
 
         # Predictions for the training, validation, and test data.
         train_prediction, valid_prediction, test_prediction = prediction(tf_train_dataset, tf_valid_dataset,
-                                                                         tf_test_dataset, variables)
-        # train_prediction = tf.nn.softmax(logits)
-        # valid_prediction = tf.nn.softmax(model(tf_valid_dataset, variables))
-        # test_prediction = tf.nn.softmax(model(tf_test_dataset, variables))
+                                                                         tf_test_dataset, variables, use_pooling)
 
         saver = tf.train.Saver()
 
